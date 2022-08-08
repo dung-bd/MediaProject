@@ -1,4 +1,4 @@
-package com.example.mediaproject;
+package com.example.mediaproject.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

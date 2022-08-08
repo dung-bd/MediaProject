@@ -1,14 +1,15 @@
-package com.example.mediaproject;
+package com.example.mediaproject.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.mediaproject.service.DownloadService;
+import com.example.mediaproject.service.InternetBroadcastReceiver;
 import com.example.mediaproject.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {

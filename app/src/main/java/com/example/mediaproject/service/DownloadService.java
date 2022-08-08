@@ -1,4 +1,4 @@
-package com.example.mediaproject;
+package com.example.mediaproject.service;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -12,9 +12,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DownloadService extends IntentService {
-
-
-
     public DownloadService() {
         super("Download");
     }

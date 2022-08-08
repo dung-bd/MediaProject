@@ -1,4 +1,4 @@
-package com.example.mediaproject;
+package com.example.mediaproject.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -15,7 +15,6 @@ import com.example.mediaproject.databinding.ActivityAudioBinding;
 import com.example.mediaproject.model.Song;
 import com.example.mediaproject.viewmodel.ViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AudioActivity extends AppCompatActivity {
@@ -23,7 +22,6 @@ public class AudioActivity extends AppCompatActivity {
     private static final int MY_CODE = 10;
     private ActivityAudioBinding binding;
     private SongAdapter songAdapter;
-    private List<Song> list;
     private ViewModel viewModel;
 
     @Override
@@ -43,7 +41,7 @@ public class AudioActivity extends AppCompatActivity {
             }
         });
 
-        songAdapter = new SongAdapter(this, new SongAdapter.ClickSong() {
+        songAdapter = new SongAdapter( new SongAdapter.ClickSong() {
             @Override
             public void clickSong(Song song) {
                 clickPlaySong(song);

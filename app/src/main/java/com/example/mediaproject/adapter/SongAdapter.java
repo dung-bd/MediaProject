@@ -18,12 +18,10 @@ import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
-    private Context context;
     private List<Song> songList;
     private ClickSong clickSong;
 
-    public SongAdapter(Context context, ClickSong clickSong){
-        this.context = context;
+    public SongAdapter( ClickSong clickSong){
         this.clickSong = clickSong;
     }
     public void setData(List<Song> list){
@@ -63,13 +61,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     }
 
     public class SongViewHolder extends RecyclerView.ViewHolder{
-        private ImageView imgSong;
+        private ImageView songImage;
         private TextView songTitle;
         private Button btnPlay;
 
         public SongViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgSong = itemView.findViewById(R.id.icon_view);
+            songImage = itemView.findViewById(R.id.icon_view);
             songTitle = itemView.findViewById(R.id.music_title_text);
             btnPlay = itemView.findViewById(R.id.btn_play);
         }

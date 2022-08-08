@@ -1,9 +1,7 @@
-package com.example.mediaproject;
+package com.example.mediaproject.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import com.example.mediaproject.R;
 import com.example.mediaproject.databinding.ActivityPlayAudioBinding;
 import com.example.mediaproject.model.Song;
 
@@ -22,10 +21,9 @@ public class PlayAudioActivity extends AppCompatActivity {
 
     private ActivityPlayAudioBinding binding;
     private static final String KEY_SONG = "key_song";
-    private static final int MY_CODE = 10;
-    MediaPlayer mediaPlayer;
-    Animation animation;
-    ImageView image;
+    private MediaPlayer mediaPlayer;
+    private Animation animation;
+    private ImageView image;
     private int[] songArray = {R.raw.ai_chung_tinh_duoc_mai_1, R.raw.ai_chung_tinh_duoc_mai_2, R.raw.chung_ta_cua_hien_tai, R.raw.am_tham_ben_em, R.raw.de_vuong, R.raw.niu_duyen, R.raw.sau_lung_anh, R.raw.sau_lung_anh};
     private int position = 0;
 
