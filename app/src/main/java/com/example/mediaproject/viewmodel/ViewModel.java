@@ -14,4 +14,11 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public LiveData<List<Song>> getListSongs() {
         return audioRepo.getListSongs();
     }
+
+    public LiveData<List<Integer>> getListSongArray(){
+        return audioRepo.getListArray();
+    }
+    public int getPosition(){
+        return audioRepo.getPosition();
+    }
 }

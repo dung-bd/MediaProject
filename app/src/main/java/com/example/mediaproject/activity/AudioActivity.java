@@ -18,7 +18,6 @@ import com.example.mediaproject.viewmodel.ViewModel;
 import java.util.List;
 
 public class AudioActivity extends AppCompatActivity {
-    private static final String KEY_SONG = "key_song";
     private static final int MY_CODE = 10;
     private ActivityAudioBinding binding;
     private SongAdapter songAdapter;
@@ -55,7 +54,7 @@ public class AudioActivity extends AppCompatActivity {
     public static void starter(Activity activity, int code, Song song) {
         Intent intent = new Intent(activity, PlayAudioActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_SONG, song);
+        bundle.putSerializable("key_song", song);
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, code);
     }

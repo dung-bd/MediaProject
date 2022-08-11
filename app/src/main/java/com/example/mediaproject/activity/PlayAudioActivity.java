@@ -1,7 +1,5 @@
 package com.example.mediaproject.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,21 +9,25 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.mediaproject.R;
 import com.example.mediaproject.databinding.ActivityPlayAudioBinding;
 import com.example.mediaproject.model.Song;
+import com.example.mediaproject.viewmodel.ViewModel;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class PlayAudioActivity extends AppCompatActivity {
 
     private ActivityPlayAudioBinding binding;
-    private static final String KEY_SONG = "key_song";
     private MediaPlayer mediaPlayer;
     private Animation animation;
-    private ImageView image;
-    private int[] songArray = {R.raw.ai_chung_tinh_duoc_mai_1, R.raw.ai_chung_tinh_duoc_mai_2, R.raw.chung_ta_cua_hien_tai, R.raw.am_tham_ben_em, R.raw.de_vuong, R.raw.niu_duyen, R.raw.sau_lung_anh, R.raw.sau_lung_anh};
-    private int position = 0;
+    private int position;
+    private ViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,29 +36,157 @@ public class PlayAudioActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         animation = AnimationUtils.loadAnimation(this, R.anim.disc_rotate);
-        image = findViewById(R.id.imageViewDisc);
 
-        Song song = (Song) getIntent().getExtras().get(KEY_SONG);
+        Song song = (Song) getIntent().getExtras().get("key_song");
 
-         mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, song.getFile());
-        binding.tvTitle.setText(song.getTitle());
-
-
-        binding.imagePlay.setOnClickListener(new View.OnClickListener() {
+        viewModel = new ViewModelProvider(this).get(ViewModel.class);
+        position = viewModel.getPosition();
+        viewModel.getListSongArray().observe(this, new Observer<List<Integer>>() {
             @Override
-            public void onClick(View v) {
-               if(mediaPlayer.isPlaying()){
-                   mediaPlayer.pause();
-                   binding.imagePlay.setImageResource(R.drawable.ic_play);
-               }else{
-                   mediaPlayer.start();
-                   binding.imagePlay.setImageResource(R.drawable.ic_pause);
-               }
-               SetTimeTotal();
-               UpdateTimeSong();
-                image.startAnimation(animation);
+            public void onChanged(List<Integer> integers) {
+                binding.imageNext.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        position++;
+                        if (position > 7) {
+                            position = 0;
+                        }
+                        if (mediaPlayer.isPlaying()) {
+                            mediaPlayer.stop();
+                        }
+                        mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, integers.get(position));
+                        binding.tvTitle.setText("Loading...");
+                        mediaPlayer.start();
+                        binding.imagePlay.setImageResource(R.drawable.ic_pause);
+                        SetTimeTotal();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                SimpleDateFormat hourForm = new SimpleDateFormat("mm:ss");
+                                binding.tvStart.setText(hourForm.format(mediaPlayer.getCurrentPosition()));
+                                binding.seekBar.setProgress(mediaPlayer.getCurrentPosition());
+
+                                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                    @Override
+                                    public void onCompletion(MediaPlayer mp) {
+                                        position++;
+                                        if (position > 7) {
+                                            position = 0;
+                                        }
+                                        if (mediaPlayer.isPlaying()) {
+                                            mediaPlayer.stop();
+                                        }
+                                        mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, integers.get(position));
+                                        binding.tvTitle.setText("Loading...");
+                                        mediaPlayer.start();
+                                        binding.imagePlay.setImageResource(R.drawable.ic_pause);
+                                        SetTimeTotal();
+                                    }
+                                });
+
+                                handler.postDelayed(this, 500);
+                            }
+                        }, 100);
+                    }
+                });
+
+                binding.imagePrev.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        position--;
+                        if (position < 0) {
+                            position = 7;
+                        }
+                        if (mediaPlayer.isPlaying()) {
+                            mediaPlayer.stop();
+                        }
+                        mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, integers.get(position));
+                        binding.tvTitle.setText("Loading...");
+                        mediaPlayer.start();
+                        binding.imagePlay.setImageResource(R.drawable.ic_pause);
+                        SetTimeTotal();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                SimpleDateFormat hourForm = new SimpleDateFormat("mm:ss");
+                                binding.tvStart.setText(hourForm.format(mediaPlayer.getCurrentPosition()));
+                                binding.seekBar.setProgress(mediaPlayer.getCurrentPosition());
+
+                                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                    @Override
+                                    public void onCompletion(MediaPlayer mp) {
+                                        position++;
+                                        if (position > 7) {
+                                            position = 0;
+                                        }
+                                        if (mediaPlayer.isPlaying()) {
+                                            mediaPlayer.stop();
+                                        }
+                                        mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, integers.get(position));
+                                        binding.tvTitle.setText("Loading...");
+                                        mediaPlayer.start();
+                                        binding.imagePlay.setImageResource(R.drawable.ic_pause);
+                                        SetTimeTotal();
+                                    }
+                                });
+
+                                handler.postDelayed(this, 500);
+                            }
+                        }, 100);
+                    }
+                });
+
+                binding.imagePlay.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mediaPlayer.isPlaying()) {
+                            mediaPlayer.pause();
+                            binding.imagePlay.setImageResource(R.drawable.ic_play);
+                        } else {
+                            mediaPlayer.start();
+                            binding.imagePlay.setImageResource(R.drawable.ic_pause);
+                        }
+                        SetTimeTotal();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                SimpleDateFormat hourForm = new SimpleDateFormat("mm:ss");
+                                binding.tvStart.setText(hourForm.format(mediaPlayer.getCurrentPosition()));
+                                binding.seekBar.setProgress(mediaPlayer.getCurrentPosition());
+
+                                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                    @Override
+                                    public void onCompletion(MediaPlayer mp) {
+                                        position++;
+                                        if (position > 7) {
+                                            position = 0;
+                                        }
+                                        if (mediaPlayer.isPlaying()) {
+                                            mediaPlayer.stop();
+                                        }
+                                        mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, integers.get(position));
+                                        binding.tvTitle.setText("Loading...");
+                                        mediaPlayer.start();
+                                        binding.imagePlay.setImageResource(R.drawable.ic_pause);
+                                        SetTimeTotal();
+                                    }
+                                });
+
+                                handler.postDelayed(this, 500);
+                            }
+                        }, 100);
+                        binding.imageViewDisc.startAnimation(animation);
+                    }
+                });
             }
         });
+
+        mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, song.getFile());
+        binding.tvTitle.setText(song.getTitle());
+
 
         binding.imageStop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,43 +199,7 @@ public class PlayAudioActivity extends AppCompatActivity {
             }
         });
 
-        binding.imageNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               position++;
-               if(position > 7){
-                   position = 0;
-               }
-               if(mediaPlayer.isPlaying()){
-                   mediaPlayer.stop();
-               }
-                mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, songArray[position]);
-                binding.tvTitle.setText("Loading...");
-                mediaPlayer.start();
-                binding.imagePlay.setImageResource(R.drawable.ic_pause);
-                SetTimeTotal();
-                UpdateTimeSong();
-            }
-        });
 
-        binding.imagePrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                position--;
-                if(position < 0){
-                    position = 7;
-                }
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.stop();
-                }
-                mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, songArray[position]);
-                binding.tvTitle.setText("Loading...");
-                mediaPlayer.start();
-                binding.imagePlay.setImageResource(R.drawable.ic_pause);
-                SetTimeTotal();
-                UpdateTimeSong();
-            }
-        });
         binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -126,41 +220,7 @@ public class PlayAudioActivity extends AppCompatActivity {
 
     }
 
-
-    private void UpdateTimeSong(){
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                SimpleDateFormat hourForm = new SimpleDateFormat("mm:ss");
-                binding.tvStart.setText(hourForm.format(mediaPlayer.getCurrentPosition()));
-                binding.seekBar.setProgress(mediaPlayer.getCurrentPosition());
-
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        position++;
-                        if(position > 7){
-                            position = 0;
-                        }
-                        if(mediaPlayer.isPlaying()){
-                            mediaPlayer.stop();
-                        }
-                        mediaPlayer = MediaPlayer.create(PlayAudioActivity.this, songArray[position]);
-                        binding.tvTitle.setText("Loading...");
-                        mediaPlayer.start();
-                        binding.imagePlay.setImageResource(R.drawable.ic_pause);
-                        SetTimeTotal();
-                        UpdateTimeSong();
-                    }
-                });
-
-                handler.postDelayed(this, 500);
-            }
-        }, 100);
-    }
-
-    private void SetTimeTotal(){
+    private void SetTimeTotal() {
         SimpleDateFormat hourForm = new SimpleDateFormat("mm:ss");
         binding.tvEnd.setText(hourForm.format(mediaPlayer.getDuration()));
         binding.seekBar.setMax(mediaPlayer.getDuration());
